@@ -5,8 +5,9 @@ from django.db import models
 
 class Route(models.Model):
     branches = models.ManyToManyField('Branch')
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=64)
 
 
 class Branch(models.Model):
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=64)
+    description = models.TextField(max_length=512, null=True)

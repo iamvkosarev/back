@@ -10,7 +10,7 @@ STATUSES = (
 
 class BidStatus(models.Model):
 
-    value= models.CharField(choices=STATUSES,max_length=32)
+    value = models.CharField(choices=STATUSES, max_length=32)
 
 
 class AbstractBid(models.Model):

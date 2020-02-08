@@ -17,8 +17,8 @@ class PhysicalTourRoute(models.Model):
                                      on_delete=models.SET_NULL,
                                      null=True,
                                      related_name='place_as_finished')
-    time_start = models.TimeField()
-    time_finish = models.TimeField()
+    time_start = models.TimeField(null=True)
+    time_finish = models.TimeField(null=True)
     moving_type = models.CharField(choices=MOVING_TYPES, max_length=32)
     tour = models.ForeignKey('PhysicalTour', on_delete=models.CASCADE)
     queue_number = models.IntegerField()
@@ -27,7 +27,7 @@ class PhysicalTourRoute(models.Model):
 class PhysicalTour(models.Model):
 
     dormitory = models.ForeignKey('place.Place', on_delete=models.SET_NULL, null=True)
-    food_supply = models.BooleanField()
+    food_supply = models.BooleanField(default=False)
     turoperator = models.ForeignKey('Turoperator', on_delete=models.CASCADE)
 
 
