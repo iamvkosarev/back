@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from .common import *
+
 # Create your models here.
 
 
@@ -28,6 +29,7 @@ class AbstractDataUser(models.Model):
     last_name = models.CharField(null=True)
     patronymic = models.CharField(null=True)
     birthdate = models.DateField(null=True)
+    photo = models.ImageField() # for demo
 
     class Meta:
         abstract = True
@@ -43,11 +45,19 @@ class TeacherUser(AbstractDataUser):
 
 class StudentUser(AbstractDataUser):
 
-    test_result = models
+    test_result = models.ForeignKey('marketplace.Branch', on_delete=models.SET_NULL, null=True)
     school = models.ForeignKey('school.School', on_delete=models.SET_NULL, null=True)
     city = models.CharField()
     user = models.ForeignKey('SiteUser', on_delete=models.CASCADE)
     image = models.FileField() # for demo
+    parent = models.ForeignKey('ParentUser', on_delete=models.SET_NULL, null=True)
+    number = models.CharField()
+
+
+class ParentUser(AbstractDataUser):
+
+    test_result = models.ForeignKey('marketplace.Branch', on_delete=models.SET_NULL, null=True)
+    image = models.ImageField()
 
 
 class Guid(AbstractDataUser):

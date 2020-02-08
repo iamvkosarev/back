@@ -6,3 +6,7 @@ class School(models.Model):
 
     name = models.CharField()
     address = models.ForeignKey('place.Address', on_delete=models.SET_NULL, null=True)
+    documents = models.ForeignKey('documents.Document', on_delete=models.SET_NULL, null=True)
+    score = models.IntegerField()
+
+
