@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+    <section>
+        <nav class="twinparty-nav" role="navigation">
+			<div class="top-menu">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12 menu-1">
+							<ul>
+								<li class="active"><a href="/">Главная</a></li>
+								<li><a href="child.html">Школьникам</a></li>
+								<li><a href="parents.html">Родителям</a></li>
+								<li><a href="teach.html">Педагогам</a></li>
+								<li><a href="contact.html">Контакты</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+    </section>
+    <section>
+        <div>
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </section>
+    <section>
+        <footer id="twinparty-footer" role="contentinfo">
+			<div class="container">
+				<div class="row pb-60">
+				<form id="myForm" action="mail.php" method="post">
+					<div class="col-sm-2 plpr-0">
+						<div class="subscribe_icon">
+							<img src="images/sub_icon.png" alt="">
+						</div>
+					</div>
+					<div class="col-sm-6 plpr-0">
+					<label for="email"></label>
+					<input type="text" name="email" id="email" class="form-control subscribe_form" placeholder="Ваша почта" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" required="">
+					</div>
+					<div class="col-sm-4 plpr-0">
+						<button type="submit" class="btn btn-primary submit-btn" style="padding: 20px 45px; margin: 20px 0;border: none;">Оставить заявку</button>
+					</div>
+				</form>
+				</div>
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<p>
+							<ul class="twinparty-social-icons">
+								<li><a href="#"><i class="icon-twitter"></i></a></li>
+								<li><a href="#"><i class="icon-facebook"></i></a></li>
+								<li><a href="#"><i class="icon-linkedin"></i></a></li>
+								<li><a href="#"><i class="icon-dribbble"></i></a></li>
+							</ul>
+     					<small class="block"><a href="politica.html">Политика конфиденциальности</a><br>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved.  <br>by <a href="http://twinparty.ru" target="_blank">twinparty</a></small>
+						</p>
+					</div>
+				</div>
+			</div>
+			</footer>
+    </section>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
