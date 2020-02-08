@@ -9,11 +9,17 @@ MOVING_TYPES = (
 
 class PhysicalTourRoute(models.Model):
 
-    place_start = models.ForeignKey('place.Platform', on_delete=models.SET_NULL, null=True)
-    place_finish = models.ForeignKey('place.Platform', on_delete=models.SET_NULL, null=True)
+    place_start = models.ForeignKey('place.Platform',
+                                    on_delete=models.SET_NULL,
+                                    null=True,
+                                    related_name='place_as_started')
+    place_finish = models.ForeignKey('place.Platform',
+                                     on_delete=models.SET_NULL,
+                                     null=True,
+                                     related_name='place_as_finished')
     time_start = models.TimeField()
     time_finish = models.TimeField()
-    moving_type = models.CharField(choices=MOVING_TYPES)
+    moving_type = models.CharField(choices=MOVING_TYPES, max_length=32)
     tour = models.ForeignKey('PhysicalTour', on_delete=models.CASCADE)
     queue_number = models.IntegerField()
 
@@ -33,6 +39,6 @@ class CommitForPhysicalTour(models.Model):
 
 class Turoperator(models.Model):
 
-    name = models.CharField()
+    name = models.CharField(max_length=32)
     documents = models.ForeignKey('documents.Document', on_delete=models.SET_NULL, null=True)
     city_zone = models.ManyToManyField('place.Place')

@@ -10,7 +10,7 @@ STATUSES = (
 
 class BidStatus(models.Model):
 
-    value= models.CharField(choices=STATUSES)
+    value= models.CharField(choices=STATUSES,max_length=32)
 
 
 class AbstractBid(models.Model):
@@ -20,7 +20,7 @@ class AbstractBid(models.Model):
 class BidAddParent(AbstractBid):
 
     children = models.ForeignKey('user.StudentUser', on_delete=models.CASCADE)
-    call = models.CharField()
+    call = models.CharField(max_length=32)
 
 
 class BidToTuroperatFromGuid(AbstractBid):

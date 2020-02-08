@@ -4,5 +4,5 @@ from django.db import models
 
 
 class StudentTour(models.Model):
-
-    tour = models.ForeignKey('')
+    pass
+    #tour = models.ForeignKey('')

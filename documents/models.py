@@ -5,4 +5,4 @@ from django.db import models
 
 class Document(models.Model):
 
-    doc1 = models.CharField()
+    doc1 = models.CharField(max_length=32)
