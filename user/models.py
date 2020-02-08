@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+from .common import *
 # Create your models here.
 
 
@@ -21,11 +22,6 @@ class SiteUser(AbstractBaseUser):
     role = models.ForeignKey('SystemRole', on_delete=models.SET_NULL, null=True)
 
 
-class Document(models.Model):
-
-    doc1 = models.CharField()
-
-
 class AbstractDataUser(models.Model):
 
     name = models.CharField(null=True)
@@ -37,7 +33,32 @@ class AbstractDataUser(models.Model):
         abstract = True
 
 
-
 class TeacherUser(AbstractDataUser):
 
     position = models.CharField()
+    user = models.ForeignKey('SiteUser', on_delete=models.CASCADE)
+    score = models.IntegerField()
+    school = models.ForeignKey('school.School', on_delete=models.SET_NULL, null=True)
+
+
+class StudentUser(AbstractDataUser):
+
+    test_result = models
+    school = models.ForeignKey('school.School', on_delete=models.SET_NULL, null=True)
+    city = models.CharField()
+    user = models.ForeignKey('SiteUser', on_delete=models.CASCADE)
+    image = models.FileField() # for demo
+
+
+class Guid(AbstractDataUser):
+
+    type_of_teaching = models.CharField(choices=TYPE_OF_TEACHING)
+    turoperator = models.ForeignKey('turoperator.Turoperator', on_delete=models.CASCADE)
+    accredited = models.BooleanField(default=False)
+
+
+class TuroperatorIntroducer(AbstractDataUser):
+
+    user = models.ForeignKey('SiteUser', on_delete=models.CASCADE)
+    turoperator = models.ForeignKey('turoperator.Turoperator', on_delete=models.CASCADE)
+
