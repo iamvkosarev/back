@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row my-3" id="route">
+        </div>
+        <div id="map" style="height: 600px; width: 100%;"></div>
+         <button class="btn btn-outline-primary" id="optimization">optimize</button>
+    </div>
+<script>
+
+    let chosenFirst = false;
+    let chosenLast = false;
+    let points = [];
+    let markers = [];
+
+    function remove (arr, indexes) {
+        let arrayOfIndexes = [].slice.call(arguments, 1);
+        return arr.filter(function (item, index) {
+            return arrayOfIndexes.indexOf(index) === -1;
+        });
+}
+
+    function addMarker(latLng, map) {
+        return new google.maps.Marker({
+            location: latLng,
+            map: map
+        });
+    }
+
+    function createCard(header, title, description, placeId, button) {
+        let element = document.createElement('div');
+        element.setAttribute('class', 'col-lg-4 py-2 card-holder');
+        let card = document.createElement('div');
+        card.setAttribute('class', 'card');
+        card.setAttribute('id', placeId);
+        let headerDiv = document.createElement('div');
+        headerDiv.setAttribute('class', 'card-header');
+        headerDiv.innerHTML = header;
+        let bodyDiv = document.createElement('div');
+        bodyDiv.setAttribute('class', 'card-body');
+        bodyDiv.innerHTML = '<h3 class="card-text card-title">' + title + '</h3>' +
+                    '<p class="card-text card-description">' + description + '</p>';
+        bodyDiv.appendChild(button);
+        card.appendChild(headerDiv);
+        card.appendChild(bodyDiv);
+
+        element.appendChild(card);
+        return element;
+
+    }
+
+     function calculateAndDisplayRoute(directionsService, directionsRenderer, eventHandler, optimize=false) {
+        let wp;
+        if (points.length > 2){
+            wp = points.slice(2);
+        }
+        else{
+            wp = []
+        }
+        console.log(points);
+        directionsService.route(
+            {
+                origin: points[0],
+                destination: points[1],
+                travelMode: 'DRIVING',
+                waypoints: wp,
+                optimizeWaypoints: optimize
+            },
+            function (result, status) {
+                if (status === 'OK') {
+                    eventHandler(result);
+                    directionsRenderer.setDirections(result)
+                }
+                else{
+                    window.alert('Directions request failed due to ' + status);                }
+            })
+
+      }
+      function routeHandler(result) {
+
+      }
+
+     function sortedRoteHandler(result) {
+            let locations = result.geocoded_waypoints;
+            let start, end;
+            start = points[0];
+            end = points[1];
+            points = [];
+            points.push(start);
+            points.push(end);
+            let startDiv = document.getElementById(start.placeId).closest('.card-holder').nextElementSibling;
+
+            for (let i=1; i < locations.length-1; i++){
+                points.push({location: {placeId: locations[i].place_id}});
+                let currDiv =  document.getElementById(locations[i].place_id);
+                currDiv.remove();
+                startDiv.insertAdjacentElement('beforeEnd', currDiv);
+                startDiv = currDiv.closest('.card-holder').nextElementSibling;
+            }
+     }
+
+
+
+    function initMap() {
+
+        let directionsService = new google.maps.DirectionsService();
+        let directionsRenderer = new google.maps.DirectionsRenderer();
+        let geocoder = new google.maps.Geocoder();
+        let map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: {lat: 55.7522200, lng: 37.6155600},
+            restriction: {
+                latLngBounds: {
+                    north: 56.004932,
+                    south: 55.134142,
+                    west: 36.636017,
+                    east: 38.113039
+                },
+                strictBounds: true,
+            }
+            });
+        directionsRenderer.setMap(map);
+        document.getElementById('optimization').addEventListener('click', function (event) {
+           if (chosenLast && chosenFirst){
+               calculateAndDisplayRoute(directionsService, directionsRenderer, sortedRoteHandler, true)
+           }
+        });
+
+        map.addListener('click', function (event){
+           geocoder.geocode({location: event.latLng}, async function (result, status) {
+               if (status === 'OK') {
+
+                   let marker;
+                   let place_id = result[0].place_id;
+                   let address = result[0].formatted_address;
+                   let location = result[0].geometry.location;
+
+                   marker = addMarker(location, map);
+                   markers.push(marker);
+
+                   let button = document.createElement('button');
+
+                   if (!chosenFirst) {
+                       chosenFirst = true;
+                       if (points.length > 0) {
+                           await document.getElementById(points[0].placeId).closest('.card-holder').remove();
+                           points[0] = {placeId: place_id};
+                           calculateAndDisplayRoute(directionsService, directionsRenderer, routeHandler)
+                       } else {
+                           points.push({placeId: place_id});
+                       }
+                       button.setAttribute('class', 'btn btn-outline-success');
+                       button.innerHTML = 'edit';
+                       button.addEventListener('click', function (event) {
+                           chosenFirst = false;
+
+                       });
+                       let colDiv = createCard(place_id, address, location, place_id, button);
+                       document.getElementById('route').insertAdjacentElement('afterBegin', colDiv);
+
+
+                   } else if (!chosenLast) {
+                       chosenLast = true;
+                       if (points.length > 1) {
+                           await document.getElementById(points[1].placeId).closest('.card-holder').remove();
+                           points[1] = {placeId: place_id};
+                           setTimeout('n=1', 250);
+                       } else {
+                           points.push({placeId: place_id});
+                       }
+                       calculateAndDisplayRoute(directionsService, directionsRenderer, routeHandler);
+
+                       button.setAttribute('class', 'btn btn-outline-success');
+                       button.innerHTML = 'edit';
+                       button.addEventListener('click', function (event) {
+                           chosenLast = false;
+                       });
+                       let colDiv = createCard(place_id, address, location, place_id, button);
+                       document.getElementById('route').insertAdjacentElement('beforeEnd', colDiv);
+
+                   } else {
+                       points.push({location: {placeId: place_id}});
+                       calculateAndDisplayRoute(directionsService, directionsRenderer, routeHandler);
+
+                       button.setAttribute('class', 'btn btn-outline-primary');
+                       button.innerHTML = 'delete';
+                       button.addEventListener('click', function (event) {
+                           points.slice(2).forEach(function (value, index,) {
+                               if (value.location.placeId === place_id){
+                                   points = points.filter(function (item) {
+                                      return item !== value;
+                                   });
+                                   document.getElementById(place_id).closest('.card-holder').remove();
+                                   calculateAndDisplayRoute(directionsService, directionsRenderer, routeHandler)
+                               }
+                           })
+                       });
+                       let colDiv = createCard(place_id, address, location, place_id, button);
+                       document.getElementById(points[1].placeId).closest('.card-holder').insertAdjacentElement('beforeBegin', colDiv);
+
+                   }
+
+               }
+           })
+        });
+
+    }
+
+</script>
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtNpCipNQbl0fdDnSA2H4iBETDnUY5ARc&callback=initMap">
+</script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-55.7522200,37.6155600&radius=500&types=food&name=harbour&key=AIzaSyCtNpCipNQbl0fdDnSA2H4iBETDnUY5ARc">
+    </script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
